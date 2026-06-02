@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>墨点大作战</title>
+    <title>豪哥墨点大作战</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
         
@@ -22,6 +22,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            touch-action: none;
         }
         
         #gameCanvas {
@@ -321,7 +322,7 @@
     <canvas id="gameCanvas"></canvas>
     
     <div class="ui-layer interactive" id="mainMenu">
-        <h1 class="game-title">墨点大作战</h1>
+        <h1 class="game-title">豪哥墨点大作战</h1>
         <p class="game-subtitle">吞噬成长，挑战极限</p>
         <button class="menu-btn" onclick="game.showLevelSelect()">开始游戏</button>
         <button class="menu-btn" onclick="game.resetProgress()">重置进度</button>
@@ -456,7 +457,7 @@
                     const progress = (i - 1) / 19;
                     this.levelData.push({
                         level: i,
-                        enemyCount: Math.floor((8 + progress * 52) * 3),
+                        enemyCount: Math.floor((8 + progress * 52) * 6),
                         enemySpeed: 0.8 + progress * 2.5,
                         bigEnemyRatio: 0.15 + progress * 0.35,
                         timeLimit: Math.max(30, 70 - Math.floor(progress * 20)),
@@ -511,6 +512,24 @@
                 this.canvas.addEventListener('mouseup', () => {
                     this.keys['mouse'] = false;
                 });
+                
+                // 阻止触摸滑动导致页面滚动
+                document.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+                
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+                
+                this.canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    if (e.touches.length > 0) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        this.mouse.x = e.touches[0].clientX - rect.left;
+                        this.mouse.y = e.touches[0].clientY - rect.top;
+                    }
+                }, { passive: false });
                 
                 document.addEventListener('keydown', (e) => {
                     this.keys[e.code] = true;
