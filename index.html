@@ -627,10 +627,15 @@
                     dist = Math.hypot(x - this.player.x, y - this.player.y);
                 } while (dist < 100);
                 
-                const isBig = Math.random() < config.bigEnemyRatio;
+                // 敌人越少，小敌人比例越高
+                const enemyRatio = this.enemies.length / config.enemyCount;
+                const adjustedBigRatio = config.bigEnemyRatio * Math.min(1, enemyRatio * 1.5);
+                const isBig = Math.random() < adjustedBigRatio;
+                
+                // 小敌人范围扩大，确保比玩家小
                 const size = isBig ? 
                     this.player.radius * (1.2 + Math.random() * 0.8) :
-                    this.player.radius * (0.5 + Math.random() * 0.5);
+                    this.player.radius * (0.3 + Math.random() * 0.6);
                 
                 const enemy = new InkDot(x, y, size, 'enemy');
                 enemy.speed = config.enemySpeed * (0.8 + Math.random() * 0.4);
@@ -654,7 +659,7 @@
                 const remainingTime = Math.max(0, this.timeLimit - Math.floor(this.gameTime / 1000));
                 
                 // 更新玩家
-                this.player.update(deltaTime, this.mouse, this.canvas);
+                this.player.update(deltaTime, this.mouse, this.canvas, this.keys['mouse']);
                 
                 // 更新敌人
                 this.enemies.forEach(enemy => {
@@ -890,8 +895,19 @@
                 return points;
             }
             
-            update(deltaTime, mouse, canvas) {
+            update(deltaTime, mouse, canvas, isMouseDown) {
                 if (this.type !== 'player') return;
+                
+                // 只有鼠标按下时才移动
+                if (!isMouseDown) {
+                    this.vx *= 0.85;
+                    this.vy *= 0.85;
+                    this.x += this.vx * (deltaTime / 16);
+                    this.y += this.vy * (deltaTime / 16);
+                    this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
+                    this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
+                    return;
+                }
                 
                 // 鼠标跟随（平滑插值）
                 const dx = mouse.x - this.x;
