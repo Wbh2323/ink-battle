@@ -102,9 +102,9 @@
         
         .level-grid {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            max-width: 1200px;
+            max-width: 420px;
             margin: 30px 0;
         }
         
@@ -452,8 +452,8 @@
             
             generateLevels() {
                 this.levelData = [];
-                for (let i = 1; i <= 50; i++) {
-                    const progress = (i - 1) / 49;
+                for (let i = 1; i <= 20; i++) {
+                    const progress = (i - 1) / 19;
                     this.levelData.push({
                         level: i,
                         enemyCount: Math.floor((8 + progress * 52) * 3),
@@ -545,7 +545,7 @@
                 const grid = document.getElementById('levelGrid');
                 grid.innerHTML = '';
                 
-                for (let i = 1; i <= 50; i++) {
+                for (let i = 1; i <= 20; i++) {
                     const btn = document.createElement('div');
                     btn.className = 'level-btn';
                     
@@ -763,7 +763,7 @@
                     else stars = 1;
                     
                     // 解锁下一关
-                    if (this.currentLevel === this.maxUnlockedLevel && this.currentLevel < 50) {
+                    if (this.currentLevel === this.maxUnlockedLevel && this.currentLevel < 20) {
                         this.maxUnlockedLevel++;
                     }
                     
@@ -778,7 +778,7 @@
                 document.getElementById('resultStars').textContent = victory ? '⭐'.repeat(stars) : '💀';
                 document.getElementById('resultTime').textContent = timeUsed;
                 document.getElementById('resultSize').textContent = finalSize;
-                document.getElementById('nextLevelBtn').style.display = victory && this.currentLevel < 50 ? 'inline-block' : 'none';
+                document.getElementById('nextLevelBtn').style.display = victory && this.currentLevel < 20 ? 'inline-block' : 'none';
                 
                 document.getElementById('gameOver').style.display = 'flex';
             }
@@ -788,7 +788,7 @@
             }
             
             nextLevel() {
-                if (this.currentLevel < 50) {
+                if (this.currentLevel < 20) {
                     this.startLevel(this.currentLevel + 1);
                 }
             }
@@ -1066,6 +1066,16 @@
                 ctx.strokeStyle = isPlayer ? 'rgba(139, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.2)';
                 ctx.lineWidth = 1;
                 ctx.stroke();
+                
+                // 玩家绘制"豪"字
+                if (isPlayer) {
+                    const fontSize = Math.max(10, this.radius * 0.9);
+                    ctx.font = `bold ${fontSize}px "Noto Serif SC", serif`;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('豪', 0, 1);
+                }
                 
                 ctx.restore();
             }
