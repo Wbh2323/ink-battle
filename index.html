@@ -659,7 +659,7 @@
                 const remainingTime = Math.max(0, this.timeLimit - Math.floor(this.gameTime / 1000));
                 
                 // 更新玩家
-                this.player.update(deltaTime, this.mouse, this.canvas, this.keys['mouse']);
+                this.player.update(deltaTime, this.mouse, this.canvas);
                 
                 // 更新敌人
                 this.enemies.forEach(enemy => {
@@ -895,19 +895,8 @@
                 return points;
             }
             
-            update(deltaTime, mouse, canvas, isMouseDown) {
+            update(deltaTime, mouse, canvas) {
                 if (this.type !== 'player') return;
-                
-                // 只有鼠标按下时才移动
-                if (!isMouseDown) {
-                    this.vx *= 0.85;
-                    this.vy *= 0.85;
-                    this.x += this.vx * (deltaTime / 16);
-                    this.y += this.vy * (deltaTime / 16);
-                    this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
-                    this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
-                    return;
-                }
                 
                 // 鼠标跟随（平滑插值）
                 const dx = mouse.x - this.x;
